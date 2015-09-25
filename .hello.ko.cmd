@@ -1,0 +1,1 @@
+cmd_/home/dani/Cosas_Telecas/kernprog/hello.ko := ld -r -m elf_x86_64 -T /usr/src/linux-headers-3.13.0-36-generic/scripts/module-common.lds --build-id  -o /home/dani/Cosas_Telecas/kernprog/hello.ko /home/dani/Cosas_Telecas/kernprog/hello.o /home/dani/Cosas_Telecas/kernprog/hello.mod.o
