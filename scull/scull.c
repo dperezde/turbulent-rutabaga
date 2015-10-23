@@ -5,12 +5,22 @@
 
 
 #include <linux/fs.h>
-#include <linux/types.h>
+#include <linux/types.h>   /* dev_t */
 #include <linux/cdev.h>
 
 #include <linux/uio.h>
 
 #include "scull.h"
+
+
+
+
+static void scull_setup_cdev(struct scull_dev *dev, int index);
+int scull_open(struct inode *inode, struct file *filp);
+int scull_trim(struct scull_dev *dev);
+ssize_t scull_read(struct file *filp, char __user *buf, size_t count, loff_t *f_pos);
+ssize_t scull_write(struct file *filp,const char __user *buf, size_t count, loff_t *f_pos);
+
 
 
 static void scull_setup_cdev(struct scull_dev *dev, int index){
