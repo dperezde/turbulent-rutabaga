@@ -25,7 +25,7 @@ struct file_operations scull_ops ={
 };
 
 
-struct scull_qset { 
+struct scull_qset {
 	void **data;
 	struct scull_qset *next;
 };
@@ -33,13 +33,13 @@ struct scull_qset {
 struct scull_dev{
 	struct scull_qset *data;  /* Pointer to first quantum set */
 	int quantum;		  /* the current quantum size */
-	int qset; 		  /* the current array size */
+	int qset;		  /* the current array size */
 	unsigned long size;	  /* amount of data stored here */
 	unsigned int access_key   /* used by sculluid and scullpriv */
 	struct semaphore sem;	  /* mutual exclusion semaphore */
 	struct cdev cdev;         /* Char device structure*/
 };
-	
+
 
 
 static void scull_setup_cdev(struct scull_dev *dev, int index){
@@ -49,7 +49,7 @@ static void scull_setup_cdev(struct scull_dev *dev, int index){
 	dev->cdev.owner = THIS_MODULE;
 	dev->cdev.ops   = &scull_fops;
 	err = cdev_add(&dev->cdev, devno,1);
-	
+
 	/* Fail gracefully if need be */
 	if(err){
 	printk(KERN_NOTICE "Error %d adding scull%d", err, index);
@@ -58,10 +58,10 @@ static void scull_setup_cdev(struct scull_dev *dev, int index){
 
 int scull_open(struct inode *inode, struct file *filp){
 	struct scull_dev *dev /* device information */
-	
+
 	dev = container_of(inode->cdev, struct scull_dev, cdev);
 	filp->private_data = dev; /*for other methods */
-	
+
 	/* now trim to 0 the length of the device if open waas write-only */
 	if ((filp->f_flags & O_ACCMODE) == O_WRONLY){
 		scull_trim(dev); /* ignore errors  */
@@ -74,7 +74,7 @@ int scull_trim(struct scull_dev *dev){
 	struct scull_qset *next, *dptr;
 	int qset = dev->qset; /* "dev" ist not-null */
 	int i;
-	
+
 	for(dptr=dev->data ; dptr ; dptr=next){ /* all the list items */
 		if(dptr->data){
 			for (i=0; i< qset ; i++){
@@ -83,7 +83,7 @@ int scull_trim(struct scull_dev *dev){
 			kfree(dptr->data);
 			dptr->data=NULL;
 		}
-		
+
 		next =dptr->next;
 		kfree(dptr);
 	}
@@ -121,7 +121,7 @@ ssize_t scull_read(struct file *filp, char __user *buf, size_t count, loff_t *f_
 	rest = (long)*f_pos % itemsize;
 	s_pos = rest / quantum;
 	q_pos = rest % quantum;
-	
+
 	/* follow the list up tyo the right position (defined elsewhere) */
 	dptr = scull_follow(dev,item);
 
@@ -163,9 +163,9 @@ ssize_t scull_write(struct file *filp,const char __user *buf, size_t count, loff
 	/* find listitem, qset index and offset in the quantum */
 	item = (long)*f_pos / itemsize;
 	rest = (long)*f_pos % itemsize;
-	s_pos = rest / quantum; 
+	s_pos = rest / quantum;
 	q_pos = rest % quantum;
-	
+
 	/* follow the list up to the right position */
 	dptr = scull_follow(dev,item);
 	if (dptr == NULL){
@@ -196,7 +196,7 @@ ssize_t scull_write(struct file *filp,const char __user *buf, size_t count, loff
 	}
 	*f_pos += count;
 	retval = count;
-	
+
 	/*update the size */
 	if(dev->size < *f_pos){
 		dev->size = *f_pos;
