@@ -140,7 +140,11 @@ int scull_open(struct inode *inode, struct file *filp){
 	dev = container_of(inode->i_cdev, struct scull_dev, cdev);
 	/* container_of macro: A convenience macro that may be used to obtain a
 	 * pointer to a structure from a
-	 * pointer to some other structure contained within it.*/
+	 * pointer to some other structure contained within it.
+	 *
+	 * i.e. obtain a pointer to scull_dev dev structure from the pointer
+	 * inode->i_cdev, which points to a structure of type cdev
+	 */
 	filp->private_data = dev; /*for other methods */
 
 	/* now trim to 0 the length of the device if open was write-only */
